@@ -34,8 +34,8 @@ struct SpotifyToken: Codable {
         self.expires_in = try container.decode(Int.self, forKey: .expires_in)
         // If createdAt is missing, default to now
         self.createdAt = (try? container.decode(Date.self, forKey: .createdAt)) ?? Date()
-        self.scope = try container.decode(String.self, forKey: .scope)
-        self.refresh_token = try container.decode(String.self, forKey: .refresh_token)
+        self.scope = try container.decodeIfPresent(String.self, forKey: .scope)
+        self.refresh_token = try container.decodeIfPresent(String.self, forKey: .refresh_token)
     }
     
     static func asBase64Credentials(s: String) -> String  {
