@@ -22,10 +22,9 @@ struct LoginView: View {
             
             TextField("2. Paste the full redirected URL here", text: $pastedURL)
                 .textFieldStyle(.roundedBorder)
-                .autocapitalization(.none)
                 .disableAutocorrection(true)
-                // Explicitly specify the Edge.Set to avoid contextual base inference errors in Xcode
                 .padding(Edge.Set.horizontal)
+          
             
             Button("3. Complete Login") {
                 Task {
