@@ -24,7 +24,8 @@ struct LoginView: View {
                 .textFieldStyle(.roundedBorder)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
-                .padding(.horizontal)
+                // Explicitly specify the Edge.Set to avoid contextual base inference errors in Xcode
+                .padding(Edge.Set.horizontal)
             
             Button("3. Complete Login") {
                 Task {
