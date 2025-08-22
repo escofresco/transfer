@@ -9,9 +9,9 @@ class SpotifyAdapter: ObservableObject {
     @Published var tokenId: String = "unset"
     @Published var topTracks: [SpotifyTrack] = []
     
-    private let clientID = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_ID"] ?? ""
-    private let clientSecret = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_SECRET"] ?? ""
-    private let redirectURI = ProcessInfo.processInfo.environment["SPOTIFY_REDIRECT_URI"] ?? ""
+    private let clientID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_CLIENT_ID") as? String ?? ""
+    private let clientSecret = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_CLIENT_SECRET") as? String ?? ""
+    private let redirectURI = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_REDIRECT_URI") as? String ?? ""
     
     private let tokenKey = "spotify-token"
     private let profileKey = "spotify-user-profile"
