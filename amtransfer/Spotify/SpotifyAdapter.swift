@@ -15,6 +15,18 @@ class SpotifyAdapter: ObservableObject {
     
     private let tokenKey = "spotify-token"
     private let profileKey = "spotify-user-profile"
+
+    // Use a dedicated URLSession so we can tweak its behaviour when
+    // attempting to reach Spotify. `waitsForConnectivity` ensures that
+    // transient network issues (for example when the device temporarily
+    // loses connectivity or DNS resolution fails) are handled more
+    // gracefully instead of immediately throwing a "cannot find host"
+    // error.
+    private let urlSession: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.waitsForConnectivity = true
+        return URLSession(configuration: configuration)
+    }()
     
     init() {
         print("SpotifyAdapter initialized.")
@@ -81,7 +93,7 @@ class SpotifyAdapter: ObservableObject {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = body.data(using: .utf8)
         
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         let decoded = try JSONDecoder().decode(SpotifyToken.self, from: data)
         
         self.spotifyToken = decoded
@@ -122,7 +134,7 @@ class SpotifyAdapter: ObservableObject {
         ]
         request.httpBody = bodyComponents.query?.data(using: .utf8)
         
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         let userToken = try JSONDecoder().decode(SpotifyToken.self, from: data)
         
         self.spotifyToken = userToken
@@ -151,7 +163,7 @@ class SpotifyAdapter: ObservableObject {
         ]
         request.httpBody = bodyComponents.query?.data(using: .utf8)
         
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         var refreshedToken = try JSONDecoder().decode(SpotifyToken.self, from: data)
         
         // Spotify may not return a new refresh token. If not, reuse the old one.
@@ -191,7 +203,7 @@ class SpotifyAdapter: ObservableObject {
             var request = URLRequest(url: url)
             request.setValue("Bearer \(token.access_token)", forHTTPHeaderField: "Authorization")
             
-            let (data, _) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await urlSession.data(for: request)
             let profile = try JSONDecoder().decode(SpotifyUserProfile.self, from: data)
             
             self.userProfile = profile
@@ -210,7 +222,7 @@ class SpotifyAdapter: ObservableObject {
             var request = URLRequest(url: url)
             request.setValue("Bearer \(token.access_token)", forHTTPHeaderField: "Authorization")
             
-            let (data, _) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await urlSession.data(for: request)
             let response = try JSONDecoder().decode(TopTracksResponse.self, from: data)
             self.topTracks = response.items
         } catch {

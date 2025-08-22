@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Transfer Callback</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .container { margin-bottom: 20px; }
+    button.copy-btn { margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Callback Details</h1>
+  <div class="container">
+    <strong>URL:</strong> <span id="url"></span>
+    <button class="copy-btn" data-copy-target="url">Copy URL</button>
+  </div>
+  <div class="container">
+    <strong>Code:</strong> <span id="code"></span>
+    <button class="copy-btn" data-copy-target="code">Copy Code</button>
+  </div>
+  <script>
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name) || '';
+    }
+    document.getElementById('url').textContent = window.location.href;
+    document.getElementById('code').textContent = getQueryParam('code');
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const target = btn.getAttribute('data-copy-target');
+        const text = document.getElementById(target).textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          const original = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => btn.textContent = original, 1500);
+        } catch (err) {
+          const original = btn.textContent;
+          btn.textContent = 'Failed';
+          setTimeout(() => btn.textContent = original, 1500);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
