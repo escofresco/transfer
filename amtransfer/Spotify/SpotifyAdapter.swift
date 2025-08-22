@@ -9,15 +9,18 @@ class SpotifyAdapter: ObservableObject {
     @Published var tokenId: String = "unset"
     @Published var topTracks: [SpotifyTrack] = []
     
-    private let clientID = "442144c176c44965a2c05859fc00e5e6"
-    private let clientSecret = "face180305184bd6bc692d932d8756c0"
-    private let redirectURI = "https://cruditech.com/callback"
+    private let clientID = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_ID"] ?? ""
+    private let clientSecret = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_SECRET"] ?? ""
+    private let redirectURI = ProcessInfo.processInfo.environment["SPOTIFY_REDIRECT_URI"] ?? ""
     
     private let tokenKey = "spotify-token"
     private let profileKey = "spotify-user-profile"
     
     init() {
         print("SpotifyAdapter initialized.")
+        if clientID.isEmpty || clientSecret.isEmpty || redirectURI.isEmpty {
+            print("⚠️ Spotify credentials are not fully set in environment variables.")
+        }
     }
     
     func setup() async {
