@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ECA8D0702E58A66300BB0980 /* .env in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D06F2E58A66300BB0980 /* .env */; };
-		ECA8D0712E58A66300BB0980 /* .env in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D06F2E58A66300BB0980 /* .env */; };
-		ECA8D0722E58A66300BB0980 /* .env in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D06F2E58A66300BB0980 /* .env */; };
+                ECA8D0702E58A66300BB0980 /* .env in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D06F2E58A66300BB0980 /* .env */; };
+                ECA8D0712E58A66300BB0980 /* .env in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D06F2E58A66300BB0980 /* .env */; };
+                ECA8D0722E58A66300BB0980 /* .env in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D06F2E58A66300BB0980 /* .env */; };
+               ECA8D0742E58A66300BB0990 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D0732E58A66300BB0990 /* Secrets.plist */; };
+               ECA8D0752E58A66300BB0990 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D0732E58A66300BB0990 /* Secrets.plist */; };
+               ECA8D0762E58A66300BB0990 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D0732E58A66300BB0990 /* Secrets.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,10 +33,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		EC1E83582E54C25A00E4AE72 /* amtransfer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = amtransfer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC1E83662E54C25B00E4AE72 /* amtransferTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = amtransferTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC1E83702E54C25B00E4AE72 /* amtransferUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = amtransferUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		ECA8D06F2E58A66300BB0980 /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
+                EC1E83582E54C25A00E4AE72 /* amtransfer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = amtransfer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+                EC1E83662E54C25B00E4AE72 /* amtransferTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = amtransferTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+                EC1E83702E54C25B00E4AE72 /* amtransferUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = amtransferUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+                ECA8D06F2E58A66300BB0980 /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
+               ECA8D0732E58A66300BB0990 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = amtransfer/Config/Secrets.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,17 +83,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		EC1E834F2E54C25A00E4AE72 = {
-			isa = PBXGroup;
-			children = (
-				EC1E835A2E54C25A00E4AE72 /* amtransfer */,
-				EC1E83692E54C25B00E4AE72 /* amtransferTests */,
-				EC1E83732E54C25B00E4AE72 /* amtransferUITests */,
-				EC1E83592E54C25A00E4AE72 /* Products */,
-				ECA8D06F2E58A66300BB0980 /* .env */,
-			);
-			sourceTree = "<group>";
-		};
+                EC1E834F2E54C25A00E4AE72 = {
+                        isa = PBXGroup;
+                        children = (
+                                EC1E835A2E54C25A00E4AE72 /* amtransfer */,
+                                EC1E83692E54C25B00E4AE72 /* amtransferTests */,
+                                EC1E83732E54C25B00E4AE72 /* amtransferUITests */,
+                                EC1E83592E54C25A00E4AE72 /* Products */,
+                                ECA8D06F2E58A66300BB0980 /* .env */,
+                                ECA8D0732E58A66300BB0990 /* Secrets.plist */,
+                        );
+                        sourceTree = "<group>";
+                };
 		EC1E83592E54C25A00E4AE72 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -216,30 +221,33 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		EC1E83562E54C25A00E4AE72 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				ECA8D0702E58A66300BB0980 /* .env in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EC1E83642E54C25B00E4AE72 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				ECA8D0712E58A66300BB0980 /* .env in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EC1E836E2E54C25B00E4AE72 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				ECA8D0722E58A66300BB0980 /* .env in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+                EC1E83562E54C25A00E4AE72 /* Resources */ = {
+                        isa = PBXResourcesBuildPhase;
+                        buildActionMask = 2147483647;
+                        files = (
+                                ECA8D0702E58A66300BB0980 /* .env in Resources */,
+                                ECA8D0742E58A66300BB0990 /* Secrets.plist in Resources */,
+                        );
+                        runOnlyForDeploymentPostprocessing = 0;
+                };
+                EC1E83642E54C25B00E4AE72 /* Resources */ = {
+                        isa = PBXResourcesBuildPhase;
+                        buildActionMask = 2147483647;
+                        files = (
+                                ECA8D0712E58A66300BB0980 /* .env in Resources */,
+                                ECA8D0752E58A66300BB0990 /* Secrets.plist in Resources */,
+                        );
+                        runOnlyForDeploymentPostprocessing = 0;
+                };
+                EC1E836E2E54C25B00E4AE72 /* Resources */ = {
+                        isa = PBXResourcesBuildPhase;
+                        buildActionMask = 2147483647;
+                        files = (
+                                ECA8D0722E58A66300BB0980 /* .env in Resources */,
+                                ECA8D0762E58A66300BB0990 /* Secrets.plist in Resources */,
+                        );
+                        runOnlyForDeploymentPostprocessing = 0;
+                };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
