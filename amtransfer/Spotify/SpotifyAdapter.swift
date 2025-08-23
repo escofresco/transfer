@@ -8,10 +8,21 @@ class SpotifyAdapter: ObservableObject {
     @Published var userProfile: SpotifyUserProfile?
     @Published var tokenId: String = "unset"
     @Published var topTracks: [SpotifyTrack] = []
-    
-    private let clientID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_CLIENT_ID") as? String ?? ""
-    private let clientSecret = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_CLIENT_SECRET") as? String ?? ""
-    private let redirectURI = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_REDIRECT_URI") as? String ?? ""
+
+    private static func loadSecrets() -> [String: Any] {
+        guard let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),
+              let data = try? Data(contentsOf: url),
+              let dict = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] else {
+            return [:]
+        }
+        return dict
+    }
+
+    private static let secrets = loadSecrets()
+
+    private let clientID = SpotifyAdapter.secrets["SPOTIFY_CLIENT_ID"] as? String ?? ""
+    private let clientSecret = SpotifyAdapter.secrets["SPOTIFY_CLIENT_SECRET"] as? String ?? ""
+    private let redirectURI = SpotifyAdapter.secrets["SPOTIFY_REDIRECT_URI"] as? String ?? ""
     
     private let tokenKey = "spotify-token"
     private let profileKey = "spotify-user-profile"
@@ -31,7 +42,7 @@ class SpotifyAdapter: ObservableObject {
     init() {
         print("SpotifyAdapter initialized.")
         if clientID.isEmpty || clientSecret.isEmpty || redirectURI.isEmpty {
-            print("⚠️ Spotify credentials are not fully set in environment variables.")
+            print("⚠️ Spotify credentials are not fully set in Secrets.plist.")
         }
     }
     
