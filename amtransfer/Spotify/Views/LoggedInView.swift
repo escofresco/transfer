@@ -4,6 +4,10 @@ struct LoggedInView: View {
     @ObservedObject var spotify: SpotifyAdapter
     @State private var selectedPlaylists: Set<String> = []
 
+    private var selectedPlaylistObjects: [SpotifyPlaylist] {
+        spotify.playlists.filter { selectedPlaylists.contains($0.id) }
+    }
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -34,7 +38,7 @@ struct LoggedInView: View {
                         }
                     }
 
-                    Section("Playlists") {
+                    Section {
                         ForEach(spotify.playlists) { playlist in
                             HStack {
                                 Toggle(isOn: Binding(
@@ -58,6 +62,11 @@ struct LoggedInView: View {
                         }
                     }
                 }
+
+                NavigationLink("Open Library") {
+                    LibraryView(selectedPlaylists: selectedPlaylistObjects)
+                }
+                .padding(.vertical)
 
                 Button("Logout", role: .destructive) {
                     spotify.logout()
