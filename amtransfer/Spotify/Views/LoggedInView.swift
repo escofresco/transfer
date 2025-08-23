@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoggedInView: View {
     @ObservedObject var spotify: SpotifyAdapter
+    @State private var selectedPlaylists: Set<String> = []
 
     var body: some View {
         NavigationStack {
@@ -35,8 +36,24 @@ struct LoggedInView: View {
 
                     Section("Playlists") {
                         ForEach(spotify.playlists) { playlist in
-                            NavigationLink(playlist.name) {
-                                PlaylistDetailView(spotify: spotify, playlist: playlist)
+                            HStack {
+                                Toggle(isOn: Binding(
+                                    get: { selectedPlaylists.contains(playlist.id) },
+                                    set: { isSelected in
+                                        if isSelected {
+                                            selectedPlaylists.insert(playlist.id)
+                                        } else {
+                                            selectedPlaylists.remove(playlist.id)
+                                        }
+                                    }
+                                )) {
+                                    EmptyView()
+                                }
+                                .toggleStyle(.checkbox)
+
+                                NavigationLink(playlist.name) {
+                                    PlaylistDetailView(spotify: spotify, playlist: playlist)
+                                }
                             }
                         }
                     }
