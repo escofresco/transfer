@@ -3,9 +3,12 @@ import SwiftUI
 struct LoggedInView: View {
     @ObservedObject var spotify: SpotifyAdapter
     @State private var selectedPlaylists: Set<String> = []
+    /// Mock items representing a user's existing library content.
+    private let mockLibraryItems = ["Saved Track", "Downloaded Album"]
 
     var body: some View {
-        NavigationStack {
+        let selectedPlaylistObjects = spotify.playlists.filter { selectedPlaylists.contains($0.id) }
+        return NavigationStack {
             VStack {
                 if let profile = spotify.userProfile {
                     Text("Welcome, \(profile.display_name)!")
@@ -58,6 +61,14 @@ struct LoggedInView: View {
                         }
                     }
                 }
+
+                NavigationLink("Library") {
+                    MediaLibraryView(
+                        existingItems: mockLibraryItems,
+                        playlists: selectedPlaylistObjects
+                    )
+                }
+                .padding(.vertical)
 
                 Button("Logout", role: .destructive) {
                     spotify.logout()
