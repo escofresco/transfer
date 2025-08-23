@@ -1,17 +1,22 @@
 import SwiftUI
 
 struct LibraryView: View {
-    /// Mock existing library items.
-    private let existingItems = ["Local Song 1", "Local Song 2", "Podcast Episode"]
+    @Environment(\.dismiss) private var dismiss
+
+    /// Mock playlists representing existing user content.
+    private let mockPlaylists = [
+        SpotifyPlaylist(id: "m1", name: "Favourites"),
+        SpotifyPlaylist(id: "m2", name: "Road Trip")
+    ]
 
     /// Playlists selected from the Spotify logged in view.
     let selectedPlaylists: [SpotifyPlaylist]
 
     var body: some View {
         List {
-            Section("My Library") {
-                ForEach(existingItems, id: \.self) { item in
-                    Text(item)
+            Section("My Playlists") {
+                ForEach(mockPlaylists) { playlist in
+                    Text(playlist.name)
                 }
             }
 
@@ -27,6 +32,11 @@ struct LibraryView: View {
             }
         }
         .navigationTitle("Library")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("Back") { dismiss() }
+            }
+        }
     }
 }
 
