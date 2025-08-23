@@ -31,6 +31,7 @@ struct LibraryView: View {
                 }
             }
         }
+        .padding(.top, 8)
         .navigationTitle("Library")
         .toolbar {
             ToolbarItem(placement: .navigation) {
@@ -41,8 +42,10 @@ struct LibraryView: View {
 }
 
 #Preview {
-    LibraryView(selectedPlaylists: [
-        SpotifyPlaylist(id: "1", name: "Chill Vibes"),
-        SpotifyPlaylist(id: "2", name: "Workout Mix")
-    ])
+    NavigationStack {
+        LibraryView(selectedPlaylists: [
+            SpotifyPlaylist(id: "1", name: "Chill Vibes"),
+            SpotifyPlaylist(id: "2", name: "Workout Mix")
+        ])
+    }
 }
