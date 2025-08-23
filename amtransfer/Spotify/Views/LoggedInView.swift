@@ -4,6 +4,10 @@ struct LoggedInView: View {
     @ObservedObject var spotify: SpotifyAdapter
     @State private var selectedPlaylists: Set<String> = []
 
+    private var selectedPlaylistObjects: [SpotifyPlaylist] {
+        spotify.playlists.filter { selectedPlaylists.contains($0.id) }
+    }
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -55,6 +59,12 @@ struct LoggedInView: View {
                                     PlaylistDetailView(spotify: spotify, playlist: playlist)
                                 }
                             }
+                        }
+                    }
+
+                    Section {
+                        NavigationLink("Open Library") {
+                            LibraryView(selectedPlaylists: selectedPlaylistObjects)
                         }
                     }
                 }
