@@ -8,6 +8,7 @@ class SpotifyAdapter: ObservableObject {
     @Published var userProfile: SpotifyUserProfile?
     @Published var tokenId: String = "unset"
     @Published var topTracks: [SpotifyTrack] = []
+    @Published var playlists: [SpotifyPlaylist] = []
 
     private static func loadSecrets() -> [String: Any] {
         guard let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),
@@ -194,12 +195,13 @@ class SpotifyAdapter: ObservableObject {
     
     private func fetchUserData() async {
         do {
-            // Run profile and track fetching concurrently.
+            // Run profile, top tracks, and playlist fetching concurrently.
             async let profileTask: () = getUserProfile()
             async let tracksTask: () = getTopTracks()
-            
-            // Await both tasks to complete. If either throws, the catch block will run.
-            _ = try await (profileTask, tracksTask)
+            async let playlistsTask: () = getUserPlaylists()
+
+            // Await all tasks to complete. If any throws, the catch block will run.
+            _ = try await (profileTask, tracksTask, playlistsTask)
         } catch {
             print("🚨 Failed to fetch user data, logging out. Error: \(error)")
             logout()
@@ -238,6 +240,39 @@ class SpotifyAdapter: ObservableObject {
             self.topTracks = response.items
         } catch {
             print("🚨 Could not fetch top tracks: \(error)")
+        }
+    }
+
+    func getUserPlaylists() async {
+        guard let token = spotifyToken, token.refresh_token != nil else { return }
+
+        do {
+            let url = URL(string: "https://api.spotify.com/v1/me/playlists")!
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(token.access_token)", forHTTPHeaderField: "Authorization")
+
+            let (data, _) = try await urlSession.data(for: request)
+            let response = try JSONDecoder().decode(PlaylistsResponse.self, from: data)
+            self.playlists = response.items
+        } catch {
+            print("🚨 Could not fetch playlists: \(error)")
+        }
+    }
+
+    func getTracks(for playlistID: String) async -> [SpotifyTrack] {
+        guard let token = spotifyToken, token.refresh_token != nil else { return [] }
+
+        do {
+            let url = URL(string: "https://api.spotify.com/v1/playlists/\(playlistID)/tracks")!
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(token.access_token)", forHTTPHeaderField: "Authorization")
+
+            let (data, _) = try await urlSession.data(for: request)
+            let response = try JSONDecoder().decode(PlaylistTracksResponse.self, from: data)
+            return response.items.map { $0.track }
+        } catch {
+            print("🚨 Could not fetch tracks for playlist \(playlistID): \(error)")
+            return []
         }
     }
 }
