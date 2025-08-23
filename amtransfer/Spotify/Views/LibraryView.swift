@@ -33,7 +33,7 @@ struct LibraryView: View {
         }
         .navigationTitle("Library")
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .navigation) {
                 Button("Back") { dismiss() }
             }
         }
