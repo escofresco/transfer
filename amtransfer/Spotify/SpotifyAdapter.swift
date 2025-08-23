@@ -8,16 +8,43 @@ class SpotifyAdapter: ObservableObject {
     @Published var userProfile: SpotifyUserProfile?
     @Published var tokenId: String = "unset"
     @Published var topTracks: [SpotifyTrack] = []
-    
-    private let clientID = "442144c176c44965a2c05859fc00e5e6"
-    private let clientSecret = "face180305184bd6bc692d932d8756c0"
-    private let redirectURI = "https://cruditech.com/callback"
+    @Published var playlists: [SpotifyPlaylist] = []
+
+    private static func loadSecrets() -> [String: Any] {
+        guard let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),
+              let data = try? Data(contentsOf: url),
+              let dict = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] else {
+            return [:]
+        }
+        return dict
+    }
+
+    private static let secrets = loadSecrets()
+
+    private let clientID = SpotifyAdapter.secrets["SPOTIFY_CLIENT_ID"] as? String ?? ""
+    private let clientSecret = SpotifyAdapter.secrets["SPOTIFY_CLIENT_SECRET"] as? String ?? ""
+    private let redirectURI = SpotifyAdapter.secrets["SPOTIFY_REDIRECT_URI"] as? String ?? ""
     
     private let tokenKey = "spotify-token"
     private let profileKey = "spotify-user-profile"
+
+    // Use a dedicated URLSession so we can tweak its behaviour when
+    // attempting to reach Spotify. `waitsForConnectivity` ensures that
+    // transient network issues (for example when the device temporarily
+    // loses connectivity or DNS resolution fails) are handled more
+    // gracefully instead of immediately throwing a "cannot find host"
+    // error.
+    private let urlSession: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.waitsForConnectivity = true
+        return URLSession(configuration: configuration)
+    }()
     
     init() {
         print("SpotifyAdapter initialized.")
+        if clientID.isEmpty || clientSecret.isEmpty || redirectURI.isEmpty {
+            print("⚠️ Spotify credentials are not fully set in Secrets.plist.")
+        }
     }
     
     func setup() async {
@@ -78,7 +105,7 @@ class SpotifyAdapter: ObservableObject {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = body.data(using: .utf8)
         
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         let decoded = try JSONDecoder().decode(SpotifyToken.self, from: data)
         
         self.spotifyToken = decoded
@@ -119,7 +146,7 @@ class SpotifyAdapter: ObservableObject {
         ]
         request.httpBody = bodyComponents.query?.data(using: .utf8)
         
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         let userToken = try JSONDecoder().decode(SpotifyToken.self, from: data)
         
         self.spotifyToken = userToken
@@ -148,7 +175,7 @@ class SpotifyAdapter: ObservableObject {
         ]
         request.httpBody = bodyComponents.query?.data(using: .utf8)
         
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         var refreshedToken = try JSONDecoder().decode(SpotifyToken.self, from: data)
         
         // Spotify may not return a new refresh token. If not, reuse the old one.
@@ -168,12 +195,13 @@ class SpotifyAdapter: ObservableObject {
     
     private func fetchUserData() async {
         do {
-            // Run profile and track fetching concurrently.
+            // Run profile, top tracks, and playlist fetching concurrently.
             async let profileTask: () = getUserProfile()
             async let tracksTask: () = getTopTracks()
-            
-            // Await both tasks to complete. If either throws, the catch block will run.
-            _ = try await (profileTask, tracksTask)
+            async let playlistsTask: () = getUserPlaylists()
+
+            // Await all tasks to complete. If any throws, the catch block will run.
+            _ = try await (profileTask, tracksTask, playlistsTask)
         } catch {
             print("🚨 Failed to fetch user data, logging out. Error: \(error)")
             logout()
@@ -188,7 +216,7 @@ class SpotifyAdapter: ObservableObject {
             var request = URLRequest(url: url)
             request.setValue("Bearer \(token.access_token)", forHTTPHeaderField: "Authorization")
             
-            let (data, _) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await urlSession.data(for: request)
             let profile = try JSONDecoder().decode(SpotifyUserProfile.self, from: data)
             
             self.userProfile = profile
@@ -207,11 +235,44 @@ class SpotifyAdapter: ObservableObject {
             var request = URLRequest(url: url)
             request.setValue("Bearer \(token.access_token)", forHTTPHeaderField: "Authorization")
             
-            let (data, _) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await urlSession.data(for: request)
             let response = try JSONDecoder().decode(TopTracksResponse.self, from: data)
             self.topTracks = response.items
         } catch {
             print("🚨 Could not fetch top tracks: \(error)")
+        }
+    }
+
+    func getUserPlaylists() async {
+        guard let token = spotifyToken, token.refresh_token != nil else { return }
+
+        do {
+            let url = URL(string: "https://api.spotify.com/v1/me/playlists")!
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(token.access_token)", forHTTPHeaderField: "Authorization")
+
+            let (data, _) = try await urlSession.data(for: request)
+            let response = try JSONDecoder().decode(PlaylistsResponse.self, from: data)
+            self.playlists = response.items
+        } catch {
+            print("🚨 Could not fetch playlists: \(error)")
+        }
+    }
+
+    func getTracks(for playlistID: String) async -> [SpotifyTrack] {
+        guard let token = spotifyToken, token.refresh_token != nil else { return [] }
+
+        do {
+            let url = URL(string: "https://api.spotify.com/v1/playlists/\(playlistID)/tracks")!
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(token.access_token)", forHTTPHeaderField: "Authorization")
+
+            let (data, _) = try await urlSession.data(for: request)
+            let response = try JSONDecoder().decode(PlaylistTracksResponse.self, from: data)
+            return response.items.map { $0.track }
+        } catch {
+            print("🚨 Could not fetch tracks for playlist \(playlistID): \(error)")
+            return []
         }
     }
 }

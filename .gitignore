@@ -63,3 +63,6 @@ fastlane/test_output
 
 # Unix
 .DS_Store
+
+# Secrets
+Secrets.plist

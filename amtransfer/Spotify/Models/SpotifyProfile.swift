@@ -1,8 +1,4 @@
-import SwiftUI
-
-struct SpotifyProfile {
-    let playlists = [SpotifyPlaylist()]
-}
+import Foundation
 
 // A simple struct to decode the /me endpoint response
 struct SpotifyUserProfile: Codable, Identifiable {
