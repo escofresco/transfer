@@ -25,7 +25,7 @@ struct PlaylistDetailView: View {
         .navigationTitle(playlist.name)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .navigation) {
                 Button(action: { dismiss() }) {
                     Label("Back", systemImage: "chevron.left")
                 }
