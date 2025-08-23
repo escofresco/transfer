@@ -10,9 +10,7 @@
 		EC7978A02E596FFA00B49BF9 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = EC79789F2E596FFA00B49BF9 /* .gitignore */; };
 		EC7978A12E596FFA00B49BF9 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = EC79789F2E596FFA00B49BF9 /* .gitignore */; };
 		EC7978A22E596FFA00B49BF9 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = EC79789F2E596FFA00B49BF9 /* .gitignore */; };
-		ECA8D0742E58A66300BB0990 /* amtransfer/Config/Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D0732E58A66300BB0990 /* amtransfer/Config/Secrets.plist */; };
-		ECA8D0752E58A66300BB0990 /* amtransfer/Config/Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D0732E58A66300BB0990 /* amtransfer/Config/Secrets.plist */; };
-		ECA8D0762E58A66300BB0990 /* amtransfer/Config/Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D0732E58A66300BB0990 /* amtransfer/Config/Secrets.plist */; };
+                ECA8D0742E58A66300BB0990 /* amtransfer/Config/Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECA8D0732E58A66300BB0990 /* amtransfer/Config/Secrets.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -230,24 +228,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EC1E83642E54C25B00E4AE72 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EC7978A02E596FFA00B49BF9 /* .gitignore in Resources */,
-				ECA8D0752E58A66300BB0990 /* amtransfer/Config/Secrets.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EC1E836E2E54C25B00E4AE72 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EC7978A12E596FFA00B49BF9 /* .gitignore in Resources */,
-				ECA8D0762E58A66300BB0990 /* amtransfer/Config/Secrets.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+                EC1E83642E54C25B00E4AE72 /* Resources */ = {
+                        isa = PBXResourcesBuildPhase;
+                        buildActionMask = 2147483647;
+                        files = (
+                                EC7978A02E596FFA00B49BF9 /* .gitignore in Resources */,
+                        );
+                        runOnlyForDeploymentPostprocessing = 0;
+                };
+                EC1E836E2E54C25B00E4AE72 /* Resources */ = {
+                        isa = PBXResourcesBuildPhase;
+                        buildActionMask = 2147483647;
+                        files = (
+                                EC7978A12E596FFA00B49BF9 /* .gitignore in Resources */,
+                        );
+                        runOnlyForDeploymentPostprocessing = 0;
+                };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
