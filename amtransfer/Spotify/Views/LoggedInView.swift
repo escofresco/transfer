@@ -38,7 +38,7 @@ struct LoggedInView: View {
                         }
                     }
 
-                    Section("Playlists") {
+                    Section {
                         ForEach(spotify.playlists) { playlist in
                             HStack {
                                 Toggle(isOn: Binding(
@@ -61,13 +61,12 @@ struct LoggedInView: View {
                             }
                         }
                     }
-
-                    Section {
-                        NavigationLink("Open Library") {
-                            LibraryView(selectedPlaylists: selectedPlaylistObjects)
-                        }
-                    }
                 }
+
+                NavigationLink("Open Library") {
+                    LibraryView(selectedPlaylists: selectedPlaylistObjects)
+                }
+                .padding(.vertical)
 
                 Button("Logout", role: .destructive) {
                     spotify.logout()
