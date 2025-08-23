@@ -4,6 +4,7 @@ struct PlaylistDetailView: View {
     @ObservedObject var spotify: SpotifyAdapter
     let playlist: SpotifyPlaylist
     @State private var tracks: [SpotifyTrack] = []
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         List {
@@ -22,6 +23,14 @@ struct PlaylistDetailView: View {
             }
         }
         .navigationTitle(playlist.name)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Label("Back", systemImage: "chevron.left")
+                }
+            }
+        }
         .task {
             tracks = await spotify.getTracks(for: playlist.id)
         }
