@@ -19,16 +19,9 @@ struct BackButtonTests {
 
     @Test func backButtonDismisses() {
         var didDismiss = false
-        let view = BackButton().environment(\.dismiss, DismissAction { didDismiss = true })
-        let mirror = Mirror(reflecting: view)
-        // try to pull out underlying Button
-        let button = mirror.descendant("content") ?? mirror.descendant("modifier", "content")
-        guard let unwrappedButton = button else {
-            Issue.record("Button not found")
-            return
-        }
-        let actionMirror = Mirror(reflecting: unwrappedButton)
-        guard let action = actionMirror.descendant("action") as? () -> Void else {
+        let backButton = BackButton(handler: { didDismiss = true })
+        let bodyMirror = Mirror(reflecting: backButton.body)
+        guard let action = bodyMirror.descendant("action") as? () -> Void else {
             Issue.record("Action not accessible")
             return
         }
