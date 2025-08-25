@@ -28,12 +28,7 @@ struct BackButtonTests {
     @Test func backButtonDismisses() {
         var didDismiss = false
         let backButton = BackButton(handler: { didDismiss = true })
-        let bodyMirror = Mirror(reflecting: backButton.body)
-        guard let action = bodyMirror.descendant("action") as? () -> Void else {
-            Issue.record("Action not accessible")
-            return
-        }
-        action()
+        backButton.performAction()
         #expect(didDismiss)
     }
 }

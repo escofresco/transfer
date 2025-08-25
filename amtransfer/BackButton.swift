@@ -12,14 +12,18 @@ struct BackButton: View {
         self.handler = handler
     }
 
+    /// Invokes the button's action. Exposed internally so tests can trigger
+    /// the action without relying on SwiftUI internals.
+    func performAction() {
+        if let handler {
+            handler()
+        } else {
+            dismiss()
+        }
+    }
+
     var body: some View {
-        Button(action: {
-            if let handler {
-                handler()
-            } else {
-                dismiss()
-            }
-        }) {
+        Button(action: performAction) {
             Label("Back", systemImage: "chevron.left")
         }
     }
