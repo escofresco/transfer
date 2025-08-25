@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct LibraryView: View {
-    @Environment(\.dismiss) private var dismiss
 
     /// Mock playlists representing existing user content.
     private let mockPlaylists = [
@@ -33,9 +32,10 @@ struct LibraryView: View {
         }
         .padding(.top, 8)
         .navigationTitle("Library")
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigation) {
-                Button("Back") { dismiss() }
+                BackButton()
             }
         }
     }

@@ -4,7 +4,6 @@ struct PlaylistDetailView: View {
     @ObservedObject var spotify: SpotifyAdapter
     let playlist: SpotifyPlaylist
     @State private var tracks: [SpotifyTrack] = []
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         List {
@@ -26,9 +25,7 @@ struct PlaylistDetailView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigation) {
-                Button(action: { dismiss() }) {
-                    Label("Back", systemImage: "chevron.left")
-                }
+                BackButton()
             }
         }
         .task {
