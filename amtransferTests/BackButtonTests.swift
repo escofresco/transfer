@@ -11,10 +11,18 @@ struct BackButtonTests {
             return
         }
         let labelMirror = Mirror(reflecting: label)
-        let title = labelMirror.descendant("title") as? Text
-        let icon = labelMirror.descendant("icon") as? Image
-        #expect(String(describing: title) == "Text(\"Back\")")
-        #expect(String(describing: icon) == "Image(systemName: \"chevron.left\")")
+        guard let title = labelMirror.descendant("title") as? Text else {
+            Issue.record("Title not found")
+            return
+        }
+        guard let icon = labelMirror.descendant("icon") as? Image else {
+            Issue.record("Icon not found")
+            return
+        }
+        #expect(String(describing: title).contains("Back"))
+        let iconMirror = Mirror(reflecting: icon)
+        let iconName = iconMirror.descendant("provider", "base", "name") as? String
+        #expect(iconName == "chevron.left")
     }
 
     @Test func backButtonDismisses() {
