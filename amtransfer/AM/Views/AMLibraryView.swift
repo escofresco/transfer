@@ -1,15 +1,15 @@
 import SwiftUI
 
-struct LibraryView: View {
+struct AMLibraryView: View {
 
     /// Mock playlists representing existing user content.
     private let mockPlaylists = [
-        SpotifyPlaylist(id: "m1", name: "Favourites"),
-        SpotifyPlaylist(id: "m2", name: "Road Trip")
+        AMPlaylist(id: "m1", name: "Favourites"),
+        AMPlaylist(id: "m2", name: "Road Trip")
     ]
 
     /// Playlists selected from the Spotify logged in view.
-    let selectedPlaylists: [SpotifyPlaylist]
+    let selectedPlaylists: [AMPlaylist]
 
     var body: some View {
         List {
@@ -19,7 +19,7 @@ struct LibraryView: View {
                 }
             }
 
-            Section("Selected Spotify Playlists") {
+            Section("Selected Playlists") {
                 if selectedPlaylists.isEmpty {
                     Text("No playlists selected")
                         .foregroundStyle(.secondary)
@@ -43,9 +43,9 @@ struct LibraryView: View {
 
 #Preview {
     NavigationStack {
-        LibraryView(selectedPlaylists: [
-            SpotifyPlaylist(id: "1", name: "Chill Vibes"),
-            SpotifyPlaylist(id: "2", name: "Workout Mix")
+        AMLibraryView(selectedPlaylists: [
+            AMPlaylist(id: "1", name: "Chill Vibes"),
+            AMPlaylist(id: "2", name: "Workout Mix")
         ])
     }
 }
