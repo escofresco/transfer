@@ -64,7 +64,11 @@ struct LoggedInView: View {
                 }
 
                 NavigationLink("Open Library") {
-                    LibraryView(selectedPlaylists: selectedPlaylistObjects)
+                    AMLibraryView(
+                        selectedPlaylists: selectedPlaylistObjects.map {
+                            AMPlaylist(id: $0.id, name: $0.name)
+                        }
+                    )
                 }
                 .padding(.vertical)
 
