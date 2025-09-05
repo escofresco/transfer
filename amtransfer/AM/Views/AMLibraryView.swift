@@ -1,12 +1,9 @@
 import SwiftUI
+import MusicKit
 
 struct AMLibraryView: View {
 
-    /// Mock playlists representing existing user content.
-    private let mockPlaylists = [
-        AMPlaylist(id: "m1", name: "Favourites"),
-        AMPlaylist(id: "m2", name: "Road Trip")
-    ]
+    @StateObject private var adapter = AMAdapter()
 
     /// Playlists selected from the Spotify logged in view.
     let selectedPlaylists: [AMPlaylist]
@@ -14,8 +11,17 @@ struct AMLibraryView: View {
     var body: some View {
         List {
             Section("My Playlists") {
-                ForEach(mockPlaylists) { playlist in
-                    Text(playlist.name)
+                if adapter.playlists.isEmpty {
+                    if adapter.authorizationStatus == .authorized {
+                        ProgressView()
+                    } else {
+                        Text("Authorize Apple Music to view playlists")
+                            .foregroundStyle(.secondary)
+                    }
+                } else {
+                    ForEach(adapter.playlists) { playlist in
+                        Text(playlist.name)
+                    }
                 }
             }
 
@@ -37,6 +43,9 @@ struct AMLibraryView: View {
             ToolbarItem(placement: .navigation) {
                 BackButton()
             }
+        }
+        .task {
+            await adapter.setup()
         }
     }
 }
