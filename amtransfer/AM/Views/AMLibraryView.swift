@@ -1,12 +1,11 @@
 import SwiftUI
+import MusicKit
 
 struct AMLibraryView: View {
 
-    /// Mock playlists representing existing user content.
-    private let mockPlaylists = [
-        AMPlaylist(id: "m1", name: "Favourites"),
-        AMPlaylist(id: "m2", name: "Road Trip")
-    ]
+    /// Playlists from the user's Apple Music library.
+    @State private var libraryPlaylists: [AMPlaylist] = []
+    @State private var isLoading = true
 
     /// Playlists selected from the Spotify logged in view.
     let selectedPlaylists: [AMPlaylist]
@@ -14,8 +13,15 @@ struct AMLibraryView: View {
     var body: some View {
         List {
             Section("My Playlists") {
-                ForEach(mockPlaylists) { playlist in
-                    Text(playlist.name)
+                if isLoading {
+                    ProgressView()
+                } else if libraryPlaylists.isEmpty {
+                    Text("No playlists in library")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(libraryPlaylists) { playlist in
+                        Text(playlist.name)
+                    }
                 }
             }
 
@@ -37,6 +43,32 @@ struct AMLibraryView: View {
             ToolbarItem(placement: .navigation) {
                 BackButton()
             }
+        }
+        .task {
+            await loadLibraryPlaylists()
+        }
+    }
+
+    /// Requests MusicKit authorization and loads the user's playlists.
+    private func loadLibraryPlaylists() async {
+        do {
+            let status = await MusicAuthorization.request()
+            guard status == .authorized else {
+                await MainActor.run { isLoading = false }
+                return
+            }
+
+            let request = MusicLibraryRequest<Playlist>()
+            let response = try await request.response()
+            let fetched = response.items.map { AMPlaylist(id: $0.id.rawValue, name: $0.name) }
+
+            await MainActor.run {
+                libraryPlaylists = fetched
+                isLoading = false
+            }
+        } catch {
+            print("Failed to load Apple Music playlists: \(error)")
+            await MainActor.run { isLoading = false }
         }
     }
 }
