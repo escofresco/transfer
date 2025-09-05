@@ -2,11 +2,7 @@ import SwiftUI
 
 struct AMLibraryView: View {
 
-    /// Mock playlists representing existing user content.
-    private let mockPlaylists = [
-        AMPlaylist(id: "m1", name: "Favourites"),
-        AMPlaylist(id: "m2", name: "Road Trip")
-    ]
+    @StateObject private var music = AMAdapter()
 
     /// Playlists selected from the Spotify logged in view.
     let selectedPlaylists: [AMPlaylist]
@@ -14,8 +10,21 @@ struct AMLibraryView: View {
     var body: some View {
         List {
             Section("My Playlists") {
-                ForEach(mockPlaylists) { playlist in
-                    Text(playlist.name)
+                if music.playlists.isEmpty {
+                    ProgressView()
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(music.playlists) { playlist in
+                                Text(playlist.name)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(Color(.secondarySystemBackground))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
                 }
             }
 
@@ -37,6 +46,9 @@ struct AMLibraryView: View {
             ToolbarItem(placement: .navigation) {
                 BackButton()
             }
+        }
+        .task {
+            await music.fetchUserPlaylists()
         }
     }
 }
