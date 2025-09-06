@@ -97,10 +97,10 @@ struct AMLibraryView: View {
     private func writeSelectedPlaylists() async {
         guard !selectedPlaylists.isEmpty else { return }
         isWriting = true
-        let ids = selectedPlaylists.map { MusicItemID(rawValue: $0.id) }
+        let playlists = selectedPlaylists.map { Playlist(id: MusicItemID(rawValue: $0.id)) }
 
         do {
-            try await MusicLibrary.shared.add(playlistIDs: ids)
+            try await MusicLibrary.shared.add(playlists)
             await MainActor.run {
                 let newPlaylists = selectedPlaylists.filter { !libraryPlaylists.contains($0) }
                 libraryPlaylists.append(contentsOf: newPlaylists)
@@ -117,10 +117,10 @@ struct AMLibraryView: View {
     private func undoWrittenPlaylists() async {
         guard !writtenPlaylists.isEmpty else { return }
         isWriting = true
-        let ids = writtenPlaylists.map { MusicItemID(rawValue: $0.id) }
+        let playlists = writtenPlaylists.map { Playlist(id: MusicItemID(rawValue: $0.id)) }
 
         do {
-            try await MusicLibrary.shared.remove(playlistIDs: ids)
+            try await MusicLibrary.shared.delete(playlists)
             await MainActor.run {
                 libraryPlaylists.removeAll { writtenPlaylists.contains($0) }
                 writtenPlaylists.removeAll()
