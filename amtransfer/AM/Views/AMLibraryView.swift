@@ -117,10 +117,10 @@ struct AMLibraryView: View {
     private func undoWrittenPlaylists() async {
         guard !writtenPlaylists.isEmpty else { return }
         isWriting = true
-        let playlists = writtenPlaylists.map { Playlist(id: MusicItemID(rawValue: $0.id)) }
+        let ids = writtenPlaylists.map { MusicItemID(rawValue: $0.id) }
 
         do {
-            try await MusicLibrary.shared.remove(playlists)
+            try await MusicLibrary.shared.delete(ids, of: .playlists)
             await MainActor.run {
                 libraryPlaylists.removeAll { writtenPlaylists.contains($0) }
                 writtenPlaylists.removeAll()
