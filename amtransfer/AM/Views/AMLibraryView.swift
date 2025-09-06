@@ -6,6 +6,8 @@ struct AMLibraryView: View {
     /// Playlists from the user's Apple Music library.
     @State private var libraryPlaylists: [AMPlaylist] = []
     @State private var isLoading = true
+    /// Newly written playlists so they can be undone.
+    @State private var writtenPlaylists: [Playlist] = []
 
     /// Playlists selected from the Spotify logged in view.
     let selectedPlaylists: [AMPlaylist]
@@ -43,6 +45,17 @@ struct AMLibraryView: View {
             ToolbarItem(placement: .navigation) {
                 BackButton()
             }
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button("Write") {
+                    Task { await writeSelectedPlaylists() }
+                }
+                .disabled(selectedPlaylists.isEmpty)
+
+                Button("Undo") {
+                    Task { await undoWrittenPlaylists() }
+                }
+                .disabled(writtenPlaylists.isEmpty)
+            }
         }
         .task {
             await loadLibraryPlaylists()
@@ -70,6 +83,39 @@ struct AMLibraryView: View {
             print("Failed to load Apple Music playlists: \(error)")
             await MainActor.run { isLoading = false }
         }
+    }
+
+    /// Writes the selected playlists to the user's Apple Music library.
+    private func writeSelectedPlaylists() async {
+        for playlist in selectedPlaylists {
+            do {
+                let created = try await MusicLibrary.shared.createPlaylist(
+                    name: playlist.name,
+                    tracks: MusicItemCollection<Track>()
+                )
+                await MainActor.run {
+                    writtenPlaylists.append(created)
+                    libraryPlaylists.append(AMPlaylist(id: created.id.rawValue, name: created.name))
+                }
+            } catch {
+                print("Failed to write playlist to library: \(error)")
+            }
+        }
+    }
+
+    /// Removes any playlists written during this session from the library.
+    private func undoWrittenPlaylists() async {
+        for playlist in writtenPlaylists {
+            do {
+                try await MusicLibrary.shared.deletePlaylist(playlist)
+                await MainActor.run {
+                    libraryPlaylists.removeAll { $0.id == playlist.id.rawValue }
+                }
+            } catch {
+                print("Failed to remove playlist from library: \(error)")
+            }
+        }
+        await MainActor.run { writtenPlaylists.removeAll() }
     }
 }
 
