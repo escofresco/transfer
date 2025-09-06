@@ -120,7 +120,7 @@ struct AMLibraryView: View {
         let playlists = writtenPlaylists.map { Playlist(id: MusicItemID(rawValue: $0.id)) }
 
         do {
-            try await MusicLibrary.shared.delete(playlists)
+            try await MusicLibrary.shared.remove(playlists)
             await MainActor.run {
                 libraryPlaylists.removeAll { writtenPlaylists.contains($0) }
                 writtenPlaylists.removeAll()
