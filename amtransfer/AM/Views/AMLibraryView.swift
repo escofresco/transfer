@@ -6,6 +6,7 @@ struct AMLibraryView: View {
     /// Playlists from the user's Apple Music library.
     @State private var libraryPlaylists: [AMPlaylist] = []
     @State private var isLoading = true
+    @State private var isTransferring = false
 
     /// Playlists selected from the Spotify logged in view.
     let selectedPlaylists: [AMPlaylist]
@@ -43,6 +44,14 @@ struct AMLibraryView: View {
             ToolbarItem(placement: .navigation) {
                 BackButton()
             }
+            ToolbarItem(placement: .primaryAction) {
+                if !selectedPlaylists.isEmpty {
+                    Button("Transfer Selected") {
+                        Task { await transferSelectedPlaylists() }
+                    }
+                    .disabled(isTransferring)
+                }
+            }
         }
         .task {
             await loadLibraryPlaylists()
@@ -70,6 +79,19 @@ struct AMLibraryView: View {
             print("Failed to load Apple Music playlists: \(error)")
             await MainActor.run { isLoading = false }
         }
+    }
+
+    /// Adds the selected playlists to the user's Apple Music library.
+    private func transferSelectedPlaylists() async {
+        guard !selectedPlaylists.isEmpty else { return }
+        await MainActor.run { isTransferring = true }
+        do {
+            let ids = selectedPlaylists.map { MusicItemID($0.id) }
+            try await MusicLibrary.shared.add(ids, to: .playlists)
+        } catch {
+            print("Failed to transfer playlists: \(error)")
+        }
+        await MainActor.run { isTransferring = false }
     }
 }
 
