@@ -112,11 +112,17 @@ struct AMLibraryView: View {
 
                 // Create a new playlist in the user's library with the matched songs.
                 if !songs.isEmpty {
+#if os(macOS)
+                    // The MusicKit API for creating playlists is not available on macOS.
+                    // Skip playlist creation to allow macOS builds to compile.
+                    print("Playlist creation is unavailable on macOS")
+#else
                     _ = try await MusicLibrary.shared.createPlaylist(
                         name: playlist.name,
                         description: "Transferred from Spotify",
                         items: songs
                     )
+#endif
                 }
             }
 
