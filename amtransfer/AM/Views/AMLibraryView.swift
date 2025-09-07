@@ -1,11 +1,23 @@
 import SwiftUI
 import MusicKit
+#if os(macOS)
+import Cocoa
+#endif
 
 struct AMLibraryView: View {
+
+    /// Provides access to the user's Spotify data for fetching tracks.
+    @ObservedObject var spotify: SpotifyAdapter
 
     /// Playlists from the user's Apple Music library.
     @State private var libraryPlaylists: [AMPlaylist] = []
     @State private var isLoading = true
+
+    /// Indicates the app failed to fetch a required developer token.
+    @State private var tokenError = false
+
+    /// Indicates that a transfer is currently running.
+    @State private var isTransferring = false
 
     /// Playlists selected from the Spotify logged in view.
     let selectedPlaylists: [AMPlaylist]
@@ -13,7 +25,10 @@ struct AMLibraryView: View {
     var body: some View {
         List {
             Section("My Playlists") {
-                if isLoading {
+                if tokenError {
+                    Text("Unable to load Apple Music library")
+                        .foregroundStyle(.secondary)
+                } else if isLoading {
                     ProgressView()
                 } else if libraryPlaylists.isEmpty {
                     Text("No playlists in library")
@@ -43,6 +58,12 @@ struct AMLibraryView: View {
             ToolbarItem(placement: .navigation) {
                 BackButton()
             }
+            ToolbarItem(placement: .primaryAction) {
+                Button("Transfer") {
+                    Task { await transferSelectedPlaylists() }
+                }
+                .disabled(selectedPlaylists.isEmpty || isTransferring || tokenError)
+            }
         }
         .task {
             await loadLibraryPlaylists()
@@ -68,16 +89,92 @@ struct AMLibraryView: View {
             }
         } catch {
             print("Failed to load Apple Music playlists: \(error)")
-            await MainActor.run { isLoading = false }
+            await MainActor.run {
+                isLoading = false
+                tokenError = true
+            }
+        }
+    }
+
+    /// Transfers the selected Spotify playlists into the user's Apple Music library.
+    private func transferSelectedPlaylists() async {
+        guard !selectedPlaylists.isEmpty, !tokenError else { return }
+
+        isTransferring = true
+        defer { isTransferring = false }
+
+        do {
+            let status = await MusicAuthorization.request()
+            guard status == .authorized else { return }
+
+            for playlist in selectedPlaylists {
+                // Fetch tracks from Spotify for each selected playlist.
+                let tracks = await spotify.getTracks(for: playlist.id)
+
+                // Attempt to match each Spotify track in the Apple Music catalog.
+                var songs: [Song] = []
+                for track in tracks {
+                    let term = "\(track.name) \(track.artistNames)"
+                    var search = MusicCatalogSearchRequest(term: term, types: [Song.self])
+                    search.limit = 1
+                    if let song = try? await search.response().songs.first {
+                        songs.append(song)
+                    }
+                }
+
+                // Create a new playlist in the user's library with the matched songs.
+                if !songs.isEmpty {
+#if os(macOS)
+                    // Use AppleScript to create the playlist on macOS, since MusicLibrary API is unavailable.
+                    let urls = songs.compactMap { $0.url?.absoluteString }
+                    let escapedName = playlist.name.replacingOccurrences(of: "\"", with: "\\\"")
+                    let urlList = urls.map { "\"\($0)\"" }.joined(separator: ", ")
+                    let scriptSource = """
+                    tell application \"Music\"
+                        if not (exists playlist \"\(escapedName)\") then
+                            set pl to make new playlist with properties {name: \"\(escapedName)\"}
+                        else
+                            set pl to playlist \"\(escapedName)\"
+                        end if
+                        repeat with theUrl in {\(urlList)}
+                            try
+                                add theUrl to pl
+                            end try
+                        end repeat
+                    end tell
+                    """
+                    if let script = NSAppleScript(source: scriptSource) {
+                        var error: NSDictionary?
+                        script.executeAndReturnError(&error)
+                        if let error { print("AppleScript error: \(error)") }
+                    }
+#else
+                    _ = try await MusicLibrary.shared.createPlaylist(
+                        name: playlist.name,
+                        description: "Transferred from Spotify",
+                        items: songs
+                    )
+#endif
+                }
+            }
+
+            // Refresh the user's library playlists after transfer.
+            await loadLibraryPlaylists()
+        } catch {
+            print("Failed to transfer playlists: \(error)")
+            await MainActor.run { tokenError = true }
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        AMLibraryView(selectedPlaylists: [
-            AMPlaylist(id: "1", name: "Chill Vibes"),
-            AMPlaylist(id: "2", name: "Workout Mix")
-        ])
+        AMLibraryView(
+            spotify: SpotifyAdapter(),
+            selectedPlaylists: [
+                AMPlaylist(id: "1", name: "Chill Vibes"),
+                AMPlaylist(id: "2", name: "Workout Mix")
+            ]
+        )
     }
 }
