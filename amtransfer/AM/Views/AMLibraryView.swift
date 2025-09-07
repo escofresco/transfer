@@ -1,5 +1,8 @@
 import SwiftUI
 import MusicKit
+#if os(macOS)
+import Cocoa
+#endif
 
 struct AMLibraryView: View {
 
@@ -113,9 +116,29 @@ struct AMLibraryView: View {
                 // Create a new playlist in the user's library with the matched songs.
                 if !songs.isEmpty {
 #if os(macOS)
-                    // The MusicKit API for creating playlists is not available on macOS.
-                    // Skip playlist creation to allow macOS builds to compile.
-                    print("Playlist creation is unavailable on macOS")
+                    // Use AppleScript to create the playlist on macOS, since MusicLibrary API is unavailable.
+                    let urls = songs.compactMap { $0.url?.absoluteString }
+                    let escapedName = playlist.name.replacingOccurrences(of: "\"", with: "\\\"")
+                    let urlList = urls.map { "\"\($0)\"" }.joined(separator: ", ")
+                    let scriptSource = """
+                    tell application \"Music\"
+                        if not (exists playlist \"\(escapedName)\") then
+                            set pl to make new playlist with properties {name: \"\(escapedName)\"}
+                        else
+                            set pl to playlist \"\(escapedName)\"
+                        end if
+                        repeat with theUrl in {\(urlList)}
+                            try
+                                add theUrl to pl
+                            end try
+                        end repeat
+                    end tell
+                    """
+                    if let script = NSAppleScript(source: scriptSource) {
+                        var error: NSDictionary?
+                        script.executeAndReturnError(&error)
+                        if let error { print("AppleScript error: \(error)") }
+                    }
 #else
                     _ = try await MusicLibrary.shared.createPlaylist(
                         name: playlist.name,
