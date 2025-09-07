@@ -53,7 +53,7 @@ struct LoggedInView: View {
                                 )) {
                                     EmptyView()
                                 }
-                                .toggleStyle(.checkbox)
+                                .toggleStyle(.switch)
 
                                 NavigationLink(playlist.name) {
                                     PlaylistDetailView(spotify: spotify, playlist: playlist)
