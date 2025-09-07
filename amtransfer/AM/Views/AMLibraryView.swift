@@ -110,15 +110,14 @@ struct AMLibraryView: View {
                     }
                 }
 
-                // Create a new playlist and add the matched songs.
-                var creationRequest = PlaylistCreationRequest(
-                    name: playlist.name,
-                    description: "Transferred from Spotify"
-                )
+                // Create a new playlist in the user's library with the matched songs.
                 if !songs.isEmpty {
-                    creationRequest.add(items: songs)
+                    _ = try await MusicLibrary.shared.createPlaylist(
+                        name: playlist.name,
+                        description: "Transferred from Spotify",
+                        songs: songs
+                    )
                 }
-                _ = try await MusicLibrary.shared.createPlaylist(creationRequest)
             }
 
             // Refresh the user's library playlists after transfer.
