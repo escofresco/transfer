@@ -13,6 +13,9 @@ struct AMLibraryView: View {
     @State private var libraryPlaylists: [AMPlaylist] = []
     @State private var isLoading = true
 
+    /// Indicates the app failed to fetch a required developer token.
+    @State private var tokenError = false
+
     /// Indicates that a transfer is currently running.
     @State private var isTransferring = false
 
@@ -22,7 +25,10 @@ struct AMLibraryView: View {
     var body: some View {
         List {
             Section("My Playlists") {
-                if isLoading {
+                if tokenError {
+                    Text("Unable to load Apple Music library")
+                        .foregroundStyle(.secondary)
+                } else if isLoading {
                     ProgressView()
                 } else if libraryPlaylists.isEmpty {
                     Text("No playlists in library")
@@ -56,7 +62,7 @@ struct AMLibraryView: View {
                 Button("Transfer") {
                     Task { await transferSelectedPlaylists() }
                 }
-                .disabled(selectedPlaylists.isEmpty || isTransferring)
+                .disabled(selectedPlaylists.isEmpty || isTransferring || tokenError)
             }
         }
         .task {
@@ -83,13 +89,16 @@ struct AMLibraryView: View {
             }
         } catch {
             print("Failed to load Apple Music playlists: \(error)")
-            await MainActor.run { isLoading = false }
+            await MainActor.run {
+                isLoading = false
+                tokenError = true
+            }
         }
     }
 
     /// Transfers the selected Spotify playlists into the user's Apple Music library.
     private func transferSelectedPlaylists() async {
-        guard !selectedPlaylists.isEmpty else { return }
+        guard !selectedPlaylists.isEmpty, !tokenError else { return }
 
         isTransferring = true
         defer { isTransferring = false }
@@ -153,6 +162,7 @@ struct AMLibraryView: View {
             await loadLibraryPlaylists()
         } catch {
             print("Failed to transfer playlists: \(error)")
+            await MainActor.run { tokenError = true }
         }
     }
 }
