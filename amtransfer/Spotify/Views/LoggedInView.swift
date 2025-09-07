@@ -67,7 +67,8 @@ struct LoggedInView: View {
                     AMLibraryView(
                         selectedPlaylists: selectedPlaylistObjects.map {
                             AMPlaylist(id: $0.id, name: $0.name)
-                        }
+                        },
+                        spotify: spotify
                     )
                 }
                 .padding(.vertical)
