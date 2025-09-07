@@ -6,6 +6,10 @@ struct AMLibraryView: View {
     /// Playlists from the user's Apple Music library.
     @State private var libraryPlaylists: [AMPlaylist] = []
     @State private var isLoading = true
+    @State private var isTransferring = false
+
+    /// Spotify adapter used to fetch playlist tracks.
+    @ObservedObject var spotify: SpotifyAdapter
 
     /// Playlists selected from the Spotify logged in view.
     let selectedPlaylists: [AMPlaylist]
@@ -43,6 +47,19 @@ struct AMLibraryView: View {
             ToolbarItem(placement: .navigation) {
                 BackButton()
             }
+            #if os(macOS)
+            ToolbarItem(placement: .primaryAction) {
+                Button("Transfer") {}
+                    .disabled(true)
+            }
+            #else
+            ToolbarItem(placement: .primaryAction) {
+                Button("Transfer") {
+                    Task { await transferSelectedPlaylists() }
+                }
+                .disabled(isTransferring || selectedPlaylists.isEmpty)
+            }
+            #endif
         }
         .task {
             await loadLibraryPlaylists()
@@ -71,13 +88,53 @@ struct AMLibraryView: View {
             await MainActor.run { isLoading = false }
         }
     }
+
+    /// Transfers the selected Spotify playlists to the user's Apple Music library.
+    private func transferSelectedPlaylists() async {
+        guard !selectedPlaylists.isEmpty else { return }
+
+        await MainActor.run { isTransferring = true }
+        defer { Task { await MainActor.run { isTransferring = false } } }
+
+        for playlist in selectedPlaylists {
+            let spotifyTracks = await spotify.getTracks(for: playlist.id)
+
+            var songIDs: [MusicItemID] = []
+            for track in spotifyTracks {
+                let term = "\(track.name) \(track.artistNames)"
+                var request = MusicCatalogSearchRequest(term: term, types: [Song.self])
+                if let response = try? await request.response(),
+                   let song = response.songs.first {
+                    songIDs.append(song.id)
+                }
+            }
+
+            guard !songIDs.isEmpty else { continue }
+
+            var createRequest = MusicLibraryPlaylistCreationRequest(
+                attributes: .init(name: playlist.name,
+                                  description: "Imported from Spotify")
+            )
+            createRequest.relationships.tracks = .init(data: songIDs)
+
+            do {
+                _ = try await createRequest.response()
+                print("Created playlist \(playlist.name)")
+            } catch {
+                print("Failed to create playlist \(playlist.name): \(error)")
+            }
+        }
+    }
 }
 
 #Preview {
     NavigationStack {
-        AMLibraryView(selectedPlaylists: [
-            AMPlaylist(id: "1", name: "Chill Vibes"),
-            AMPlaylist(id: "2", name: "Workout Mix")
-        ])
+        AMLibraryView(
+            spotify: SpotifyAdapter(),
+            selectedPlaylists: [
+                AMPlaylist(id: "1", name: "Chill Vibes"),
+                AMPlaylist(id: "2", name: "Workout Mix")
+            ]
+        )
     }
 }
