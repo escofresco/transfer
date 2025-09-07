@@ -115,7 +115,7 @@ struct AMLibraryView: View {
                     _ = try await MusicLibrary.shared.createPlaylist(
                         name: playlist.name,
                         description: "Transferred from Spotify",
-                        songs: songs
+                        items: songs
                     )
                 }
             }
