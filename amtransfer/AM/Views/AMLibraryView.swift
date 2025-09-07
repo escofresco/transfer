@@ -1,5 +1,6 @@
 import SwiftUI
 import MusicKit
+import Foundation
 
 struct AMLibraryView: View {
 
@@ -81,17 +82,45 @@ struct AMLibraryView: View {
         }
     }
 
-    /// Adds the selected playlists to the user's Apple Music library.
+    /// Adds the selected playlists to the user's Apple Music library on macOS
+    /// by executing an AppleScript command for each playlist identifier.
     private func transferSelectedPlaylists() async {
         guard !selectedPlaylists.isEmpty else { return }
         await MainActor.run { isTransferring = true }
-        do {
-            let ids = selectedPlaylists.map { MusicItemID($0.id) }
-            try await MusicLibrary.shared.add(ids, to: .playlists)
-        } catch {
-            print("Failed to transfer playlists: \(error)")
+
+        for playlist in selectedPlaylists {
+            await runAppleScript(for: playlist)
         }
+
         await MainActor.run { isTransferring = false }
+    }
+
+    /// Executes an AppleScript snippet that subscribes to the playlist with the
+    /// provided identifier. This approach is used instead of MusicKit because
+    /// it works on macOS without needing additional entitlements.
+    private func runAppleScript(for playlist: AMPlaylist) async {
+        let script = """
+        tell application "Music"
+            try
+                subscribe playlist id "\(playlist.id)"
+            on error errMsg
+                return errMsg
+            end try
+        end tell
+        """
+
+        await withCheckedContinuation { continuation in
+            let task = Process()
+            task.launchPath = "/usr/bin/osascript"
+            task.arguments = ["-e", script]
+            task.terminationHandler = { _ in continuation.resume() }
+            do {
+                try task.run()
+            } catch {
+                print("AppleScript execution failed: \(error)")
+                continuation.resume()
+            }
+        }
     }
 }
 
