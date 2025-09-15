@@ -6,29 +6,22 @@ struct ContentView: View {
     @State private var pastedURL: String = ""
     
     var body: some View {
-        GeometryReader { proxy in
-            Group {
-                if isReady {
-                    if spotify.userProfile != nil {
-                        LoggedInView(spotify: spotify)
-                    } else {
-                        LoginView(spotify: spotify, pastedURL: $pastedURL)
-                    }
+        Group {
+            if isReady {
+                if spotify.userProfile != nil {
+                    LoggedInView(spotify: spotify)
                 } else {
-                    ProgressView("Initializing...")
-                        .task {
-                            await spotify.setup()
-                            self.isReady = true
-                        }
+                    LoginView(spotify: spotify, pastedURL: $pastedURL)
                 }
+            } else {
+                ProgressView("Initializing...")
+                    .task {
+                        await spotify.setup()
+                        self.isReady = true
+                    }
             }
-            .frame(
-                width: proxy.size.width,
-                height: proxy.size.height + proxy.safeAreaInsets.bottom,
-                alignment: .top
-            )
         }
-        .ignoresSafeArea(.container, edges: .bottom)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 

@@ -12,53 +12,46 @@ struct AMLibraryView: View {
     let selectedPlaylists: [AMPlaylist]
 
     var body: some View {
-        GeometryReader { proxy in
-            List {
-                Section("My Playlists") {
-                    if isLoading {
-                        ProgressView()
-                    } else if let errorMessage {
-                        Text(errorMessage)
-                            .foregroundStyle(.red)
-                    } else if libraryPlaylists.isEmpty {
-                        Text("No playlists in library")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(libraryPlaylists) { playlist in
-                            Text(playlist.name)
-                        }
+        List {
+            Section("My Playlists") {
+                if isLoading {
+                    ProgressView()
+                } else if let errorMessage {
+                    Text(errorMessage)
+                        .foregroundStyle(.red)
+                } else if libraryPlaylists.isEmpty {
+                    Text("No playlists in library")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(libraryPlaylists) { playlist in
+                        Text(playlist.name)
                     }
                 }
+            }
 
-                Section("Selected Playlists") {
-                    if selectedPlaylists.isEmpty {
-                        Text("No playlists selected")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(selectedPlaylists) { playlist in
-                            Text(playlist.name)
-                        }
+            Section("Selected Playlists") {
+                if selectedPlaylists.isEmpty {
+                    Text("No playlists selected")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(selectedPlaylists) { playlist in
+                        Text(playlist.name)
                     }
                 }
-            }
-            .padding(.top, 8)
-            .frame(
-                width: proxy.size.width,
-                height: proxy.size.height + proxy.safeAreaInsets.bottom,
-                alignment: .top
-            )
-            .navigationTitle("Library")
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    BackButton()
-                }
-            }
-            .task {
-                await loadLibraryPlaylists()
             }
         }
-        .ignoresSafeArea(.container, edges: .bottom)
+        .padding(.top, 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .navigationTitle("Library")
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                BackButton()
+            }
+        }
+        .task {
+            await loadLibraryPlaylists()
+        }
     }
 
     /// Requests MusicKit authorization and loads the user's playlists.
