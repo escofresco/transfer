@@ -10,5 +10,3 @@ to be bundled in the app at build time. Provide values for the following keys:
 - `SPOTIFY_REDIRECT_URI`
 
 This file is included in the app bundle and the credentials are read at runtime using `Bundle.main.object(forInfoDictionaryKey:)`.
-
-Update `Secrets.plist` with your own credentials before building the app.
