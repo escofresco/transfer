@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct ContentView: View {
     @StateObject private var spotify = SpotifyAdapter()
@@ -7,29 +6,23 @@ struct ContentView: View {
     @State private var pastedURL: String = ""
     
     var body: some View {
-        GeometryReader { proxy in
-            Group {
-                if isReady {
-                    if spotify.userProfile != nil {
-                        LoggedInView(spotify: spotify)
-                    } else {
-                        LoginView(spotify: spotify, pastedURL: $pastedURL)
-                    }
+        Group {
+            if isReady {
+                if spotify.userProfile != nil {
+                    LoggedInView(spotify: spotify)
                 } else {
-                    ProgressView("Initializing...")
-                        .task {
-                            await spotify.setup()
-                            self.isReady = true
-                        }
+                    LoginView(spotify: spotify, pastedURL: $pastedURL)
                 }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .onAppear {
-                print("Root view frame:", proxy.frame(in: .global))
-                print("UIScreen bounds:", UIScreen.main.bounds)
+            } else {
+                ProgressView("Initializing...")
+                    .task {
+                        await spotify.setup()
+                        self.isReady = true
+                    }
             }
         }
-        .edgesIgnoringSafeArea(.all)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .ignoresSafeArea()
     }
 }
 
