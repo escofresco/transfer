@@ -5,14 +5,14 @@ import UIKit
 
 @MainActor
 struct ViewLayoutTests {
-    private func assertFillsScreen<V: View>(_ view: V, file: StaticString = #file, line: UInt = #line) {
+    private func assertFillsScreen<V: View>(_ view: V) {
         let controller = UIHostingController(rootView: view)
         let screenSize = UIScreen.main.bounds.size == .zero ? CGSize(width: 390, height: 844) : UIScreen.main.bounds.size
         controller.view.frame = CGRect(origin: .zero, size: screenSize)
         controller.view.setNeedsLayout()
         controller.view.layoutIfNeeded()
         let hostedSize = controller.view.subviews.first?.bounds.size ?? .zero
-        #expect(hostedSize == screenSize, file: file, line: line)
+        #expect(hostedSize == screenSize)
     }
 
     @Test func contentViewFillsScreen() {
