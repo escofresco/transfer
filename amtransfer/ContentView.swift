@@ -6,19 +6,22 @@ struct ContentView: View {
     @State private var pastedURL: String = ""
     
     var body: some View {
-        if isReady {
-            if spotify.userProfile != nil {
-                LoggedInView(spotify: spotify)
-            } else {
-                LoginView(spotify: spotify, pastedURL: $pastedURL)
-            }
-        } else {
-            ProgressView("Initializing...")
-                .task {
-                    await spotify.setup()
-                    self.isReady = true
+        Group {
+            if isReady {
+                if spotify.userProfile != nil {
+                    LoggedInView(spotify: spotify)
+                } else {
+                    LoginView(spotify: spotify, pastedURL: $pastedURL)
                 }
+            } else {
+                ProgressView("Initializing...")
+                    .task {
+                        await spotify.setup()
+                        self.isReady = true
+                    }
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 
