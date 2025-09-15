@@ -9,78 +9,81 @@ struct LoggedInView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack {
-                if let profile = spotify.userProfile {
-                    Text("Welcome, \(profile.display_name)!")
-                        .font(.headline)
-                        .padding(.top)
+        GeometryReader { proxy in
+            NavigationStack {
+                VStack {
+                    if let profile = spotify.userProfile {
+                        Text("Welcome, \(profile.display_name)!")
+                            .font(.headline)
+                            .padding(.top)
 
-                    Text("Token ID: \(spotify.tokenId)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                List {
-                    Section("Top 5 Songs") {
-                        if spotify.topTracks.isEmpty {
-                            ProgressView()
-                        } else {
-                            ForEach(spotify.topTracks) { track in
-                                VStack(alignment: .leading) {
-                                    Text(track.name)
-                                        .fontWeight(.semibold)
-                                    Text(track.artistNames)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
+                        Text("Token ID: \(spotify.tokenId)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
 
-                    Section {
-                        ForEach(spotify.playlists) { playlist in
-                            HStack {
-                                Toggle(isOn: Binding(
-                                    get: { selectedPlaylists.contains(playlist.id) },
-                                    set: { isSelected in
-                                        if isSelected {
-                                            selectedPlaylists.insert(playlist.id)
-                                        } else {
-                                            selectedPlaylists.remove(playlist.id)
-                                        }
+                    List {
+                        Section("Top 5 Songs") {
+                            if spotify.topTracks.isEmpty {
+                                ProgressView()
+                            } else {
+                                ForEach(spotify.topTracks) { track in
+                                    VStack(alignment: .leading) {
+                                        Text(track.name)
+                                            .fontWeight(.semibold)
+                                        Text(track.artistNames)
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
                                     }
-                                )) {
-                                    EmptyView()
                                 }
-                                .toggleStyle(.switch)
+                            }
+                        }
 
-                                NavigationLink(playlist.name) {
-                                    PlaylistDetailView(spotify: spotify, playlist: playlist)
+                        Section {
+                            ForEach(spotify.playlists) { playlist in
+                                HStack {
+                                    Toggle(isOn: Binding(
+                                        get: { selectedPlaylists.contains(playlist.id) },
+                                        set: { isSelected in
+                                            if isSelected {
+                                                selectedPlaylists.insert(playlist.id)
+                                            } else {
+                                                selectedPlaylists.remove(playlist.id)
+                                            }
+                                        }
+                                    )) {
+                                        EmptyView()
+                                    }
+                                    .toggleStyle(.switch)
+
+                                    NavigationLink(playlist.name) {
+                                        PlaylistDetailView(spotify: spotify, playlist: playlist)
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                .frame(maxHeight: .infinity)
+                    .frame(maxHeight: .infinity)
 
-                NavigationLink("Open Library") {
-                    AMLibraryView(
-                        selectedPlaylists: selectedPlaylistObjects.map {
-                            AMPlaylist(id: $0.id, name: $0.name)
-                        }
-                    )
-                }
-                .padding(.vertical)
+                    NavigationLink("Open Library") {
+                        AMLibraryView(
+                            selectedPlaylists: selectedPlaylistObjects.map {
+                                AMPlaylist(id: $0.id, name: $0.name)
+                            }
+                        )
+                    }
+                    .padding(.vertical)
 
-                Button("Logout", role: .destructive) {
-                    spotify.logout()
+                    Button("Logout", role: .destructive) {
+                        spotify.logout()
+                    }
+                    .padding()
                 }
                 .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .navigationTitle("Spotify")
             }
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .navigationTitle("Spotify")
+            .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
         }
     }
 }
