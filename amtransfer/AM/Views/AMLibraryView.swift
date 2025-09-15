@@ -42,7 +42,11 @@ struct AMLibraryView: View {
                 }
             }
             .padding(.top, 8)
-            .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
+            .frame(
+                width: proxy.size.width,
+                height: proxy.size.height + proxy.safeAreaInsets.bottom,
+                alignment: .top
+            )
             .navigationTitle("Library")
             .navigationBarBackButtonHidden(true)
             .toolbar {
@@ -54,6 +58,7 @@ struct AMLibraryView: View {
                 await loadLibraryPlaylists()
             }
         }
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 
     /// Requests MusicKit authorization and loads the user's playlists.

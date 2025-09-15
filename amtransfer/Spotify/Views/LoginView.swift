@@ -43,7 +43,12 @@ struct LoginView: View {
                 Spacer()
             }
             .padding()
-            .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
+            .frame(
+                width: proxy.size.width,
+                height: proxy.size.height + proxy.safeAreaInsets.bottom,
+                alignment: .top
+            )
         }
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 }

@@ -12,7 +12,9 @@ struct ViewLayoutTests {
         controller.view.setNeedsLayout()
         controller.view.layoutIfNeeded()
         let hostedSize = controller.view.subviews.first?.bounds.size ?? .zero
-        #expect(hostedSize == screenSize)
+        let expectedHeight = screenSize.height - controller.view.safeAreaInsets.top
+        let expectedSize = CGSize(width: screenSize.width, height: expectedHeight)
+        #expect(hostedSize == expectedSize)
     }
 
     @Test func contentViewFillsScreen() {
