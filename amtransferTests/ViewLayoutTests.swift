@@ -28,6 +28,6 @@ struct ViewLayoutTests {
     }
 
     @Test func amLibraryViewFillsScreen() {
-        assertFillsScreen(AMLibraryView(selectedPlaylists: []))
+        assertFillsScreen(AMLibraryView(spotify: SpotifyAdapter(), selectedPlaylists: []))
     }
 }

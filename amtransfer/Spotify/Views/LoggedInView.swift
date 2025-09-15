@@ -66,6 +66,7 @@ struct LoggedInView: View {
 
                 NavigationLink("Open Library") {
                     AMLibraryView(
+                        spotify: spotify,
                         selectedPlaylists: selectedPlaylistObjects.map {
                             AMPlaylist(id: $0.id, name: $0.name)
                         }
