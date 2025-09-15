@@ -348,6 +348,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -406,6 +407,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -443,6 +445,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -477,6 +480,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -489,66 +493,72 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7229HA67NJ;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cvtlvnd.amtransferTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/amtransfer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/amtransfer";
-			};
-			name = Debug;
-		};
-		EC1E837F2E54C25B00E4AE72 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7229HA67NJ;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cvtlvnd.amtransferTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/amtransfer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/amtransfer";
-			};
-			name = Release;
-		};
-		EC1E83812E54C25B00E4AE72 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7229HA67NJ;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cvtlvnd.amtransferUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = amtransfer;
-			};
-			name = Debug;
-		};
-		EC1E83822E54C25B00E4AE72 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7229HA67NJ;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cvtlvnd.amtransferUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = amtransfer;
-			};
-			name = Release;
-		};
+                                MARKETING_VERSION = 1.0;
+                                PRODUCT_BUNDLE_IDENTIFIER = com.cvtlvnd.amtransferTests;
+                                PRODUCT_NAME = "$(TARGET_NAME)";
+                                SWIFT_EMIT_LOC_STRINGS = NO;
+                                SWIFT_VERSION = 5.0;
+                                TEST_HOST = "$(BUILT_PRODUCTS_DIR)/amtransfer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/amtransfer";
+                                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+                                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                        };
+                        name = Debug;
+                };
+                EC1E837F2E54C25B00E4AE72 /* Release */ = {
+                        isa = XCBuildConfiguration;
+                        buildSettings = {
+                                BUNDLE_LOADER = "$(TEST_HOST)";
+                                CODE_SIGN_STYLE = Automatic;
+                                CURRENT_PROJECT_VERSION = 1;
+                                DEVELOPMENT_TEAM = 7229HA67NJ;
+                                GENERATE_INFOPLIST_FILE = YES;
+                                MARKETING_VERSION = 1.0;
+                                PRODUCT_BUNDLE_IDENTIFIER = com.cvtlvnd.amtransferTests;
+                                PRODUCT_NAME = "$(TARGET_NAME)";
+                                SWIFT_EMIT_LOC_STRINGS = NO;
+                                SWIFT_VERSION = 5.0;
+                                TEST_HOST = "$(BUILT_PRODUCTS_DIR)/amtransfer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/amtransfer";
+                                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+                                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                        };
+                        name = Release;
+                };
+                EC1E83812E54C25B00E4AE72 /* Debug */ = {
+                        isa = XCBuildConfiguration;
+                        buildSettings = {
+                                CODE_SIGN_STYLE = Automatic;
+                                CURRENT_PROJECT_VERSION = 1;
+                                DEVELOPMENT_TEAM = 7229HA67NJ;
+                                GENERATE_INFOPLIST_FILE = YES;
+                                MARKETING_VERSION = 1.0;
+                                PRODUCT_BUNDLE_IDENTIFIER = com.cvtlvnd.amtransferUITests;
+                                PRODUCT_NAME = "$(TARGET_NAME)";
+                                SWIFT_EMIT_LOC_STRINGS = NO;
+                                SWIFT_VERSION = 5.0;
+                                TEST_TARGET_NAME = amtransfer;
+                                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+                                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                        };
+                        name = Debug;
+                };
+                EC1E83822E54C25B00E4AE72 /* Release */ = {
+                        isa = XCBuildConfiguration;
+                        buildSettings = {
+                                CODE_SIGN_STYLE = Automatic;
+                                CURRENT_PROJECT_VERSION = 1;
+                                DEVELOPMENT_TEAM = 7229HA67NJ;
+                                GENERATE_INFOPLIST_FILE = YES;
+                                MARKETING_VERSION = 1.0;
+                                PRODUCT_BUNDLE_IDENTIFIER = com.cvtlvnd.amtransferUITests;
+                                PRODUCT_NAME = "$(TARGET_NAME)";
+                                SWIFT_EMIT_LOC_STRINGS = NO;
+                                SWIFT_VERSION = 5.0;
+                                TEST_TARGET_NAME = amtransfer;
+                                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+                                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                        };
+                        name = Release;
+                };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */

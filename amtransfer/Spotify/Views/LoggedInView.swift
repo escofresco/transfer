@@ -62,6 +62,7 @@ struct LoggedInView: View {
                         }
                     }
                 }
+                .frame(maxHeight: .infinity)
 
                 NavigationLink("Open Library") {
                     AMLibraryView(
@@ -78,6 +79,7 @@ struct LoggedInView: View {
                 .padding()
             }
             .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .navigationTitle("Spotify")
         }
     }
