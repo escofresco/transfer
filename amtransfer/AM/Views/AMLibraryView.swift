@@ -24,7 +24,9 @@ struct AMLibraryView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(libraryPlaylists) { playlist in
-                        Text(playlist.name)
+                        NavigationLink(playlist.name) {
+                            AMPlaylistDetailView(playlist: playlist)
+                        }
                     }
                 }
             }
@@ -35,7 +37,9 @@ struct AMLibraryView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(selectedPlaylists) { playlist in
-                        Text(playlist.name)
+                        NavigationLink(playlist.name) {
+                            AMPlaylistDetailView(playlist: playlist)
+                        }
                     }
                 }
             }
