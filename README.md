@@ -1,4 +1,4 @@
-## Spotify API Configuration
+## <img width="20" height="20" alt="master" src="https://github.com/user-attachments/assets/7fa68318-24a5-4e79-99ca-c5506c99aba8" /> Spotify API Configuration 
 
 A template file is provided at `amtransfer/Config/Secrets.example.plist`.
 Copy it to `amtransfer/Config/Secrets.plist` and update the placeholders
